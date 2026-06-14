@@ -28,8 +28,8 @@ $n{=}5,10$ = random SPSA seeds (weight-corruption and F1 ablation contexts); $n{
 \begin{table}[H]\centering\small
 \begin{tabular}{lccc}\toprule
 Item & BAAIWorm & flybody & modWorm \\\midrule
-Param dim & 5 & 515 & 30/50 \\
-Search-space transform & linear $[0.5,2]$ & log-space mult. & linear \\
+Param dim & 5 (global scales) / $\approx$5k (full5 per-element) & 515 & 30/50 \\
+Search-space transform & linear $[0.5,2]$ (scales); per-element (full5) & log-space mult. & linear \\
 Integrator / $dt$ & RK4 1ms & MuJoCo 0.1ms & implicit-Euler 0.5ms \\
 Output rate & 30 Hz & 10 kHz & 25 Hz \\
 Rollout length & 10 s & 5 s & 40 s \\
@@ -60,7 +60,7 @@ Finding & Caveat / scope & Section \\\midrule
 F1 ablation neural control ($10$ paired seeds, $n{=}20$ runs) & Pre-registered NULL (Wilcoxon $p{=}0.734$, $d{=}0.14$). Pure-trajectory loss is not beaten by neural-augmented loss -- positive for the framework. (S4.4.1) & S2.9 \\
 modWorm three-segment & Eigenworm-variance channels unmovable even at expert arm: substrate ceiling, $-9.9\%$ aggregate (S4.18). & S4.18 \\
 flybody $W_1$ three-segment & Honest negative: all three arms within $<1.5\%$ ($13.254/13.454/13.348$); \texttt{walk\_imitation} MoCap controller dominates trajectory, init signal carried in loss space ($9.3\times$), not $W_1$ (S4.18). & S4.18 \\
-Extended-budget hybrid fine-tune & Useful but mild ($-1.0\%$/$-5.5\%$/$-2.0\%$ held-out dips): warm-start near irreducible sim$\leftrightarrow$real floor (S4.23). & S4.23 \\
+Extended-budget hybrid fine-tune & Useful but mild ($-1.1\%$/$-5.5\%$/$-2.0\%$ held-out dips): warm-start near irreducible sim$\leftrightarrow$real floor (S4.23). & S4.23 \\
 flybody default-vs-PGOB & $0/9$ significant ($N{=}45$/arm): good default $\Rightarrow$ correct NULL (S4.21). & S4.21 \\
 41-experiment GAN-as-loss collapse & Val-loss $\geq 2\times$ regression across 5 D-architectures. & S2.10 \\
 Same-species parameter-prior transfer & Genuine same-species rescue (BAAIWorm$\to$modWorm $N{=}16$, flybody self-prior $9.3\times$); transfer demonstrated between two simulators of the same species only. & S4.5 \\
@@ -128,16 +128,16 @@ The same-species parameter-prior transfer (S4.5/S4.6) derives a per-biophysical-
 
 \subsection{BAAIWorm three-distance hierarchy (S4.1)}
 \begin{table}[H]\centering\small
-\caption{Three-distance hierarchy, BAAIWorm full5 $\to$ OWMD-N2 ($N{=}200$).}
+\caption{Three-distance hierarchy, BAAIWorm full5 $\to$ OWMD-N2 ($N{=}200$). The \textbf{robust (MAD) $z$} estimator is the canonical one used throughout the main text ($D_1{=}0.71$, $D_2{=}1.98$, $D_3{=}21.82$); the other rows are sensitivity checks under alternative estimators. The strict $D_1{<}D_2{\ll}D_3$ hierarchy holds under the canonical estimator and the naive estimator; under the alternative $5$-active-feature cross-validated $D_2$ estimator the real$\leftrightarrow$real reference contracts to $0.393$ so $D_1$ no longer falls below it, but $D_1{<}D_3$ still holds by $30\times$. We report the robust estimator as canonical because the cross-validated $D_2$ uses a held-out feature subset that under-counts genuine inter-individual spread.}
 \begin{tabular}{lcccc}\toprule
 estimator & $D_1$ & $D_2$ & $D_3$ & hierarchy \\\midrule
+\textbf{robust (MAD), canonical} & \textbf{0.713} & \textbf{1.976} & \textbf{21.82} & $D_1<D_2<D_3$ \\
 naive & 0.500 & 1.780 & 26.47 & $D_1<D_2<D_3$ \\
-robust (MAD) & \textbf{0.713} & \textbf{1.976} & \textbf{21.82} & $D_1<D_2<D_3$ \\
 trimmed 5\% & --- & 2.366 & 30.32 & $D_2<D_3$ \\
-5-active-feature CV & 0.713 & 0.393 & 21.82 & $D_1<D_3$, marginal vs.\ $D_2$ \\\bottomrule
+5-active-feature CV (sensitivity) & 0.713 & 0.393 & 21.82 & $D_1<D_3$ ($30\times$); marginal vs.\ $D_2$ \\\bottomrule
 \end{tabular}
 \end{table}
-Bootstrap $B{=}1000$ on OWMD-N2: $D_1<D_2<D_3$ in $1000/1000$.
+Bootstrap $B{=}1000$ on OWMD-N2 under the canonical robust estimator: $D_1<D_2<D_3$ in $1000/1000$.
 
 \subsection{Drosophila parity (S4.2)}
 \textbf{flybody walking TEST split}: $9/10$ closer at $+1.75\%$ ($60$ train / $20$ val / $20$ holdout). FULL-split caveat: default already strong; PGOB room marginal under FULL split. \textbf{Flight wing-beat} $227.92\pm 5.59$ Hz. \textbf{FlyGym 5-behaviour}: $5/5$ inside biological CV. \textbf{Adhesion phenotype}: 3-of-3 / 0-of-3 split.
@@ -204,18 +204,17 @@ The F1 neural-ablation control runs over $10$ paired matched seeds ($n{=}20$ run
 The load-bearing evidence that PGOB recovers biology-governed parameter structure (rather than fitting arbitrary numbers) is the genuine-rollout same-species soft-prior rescue, detailed in S4.6. A parameter prior derived from one simulator of a species transfers to a different simulator of the \emph{same} species: BAAIWorm$\to$modWorm on the real Cook-ODE ($N{=}16$ held-out test rollouts, $13/16$ prior-better than random, $p{=}0.025$), and the flybody self-prior (FlyGym$\to$flybody, $9.3\times$ loss improvement). That a prior learned on one worm simulator moves a different worm simulator, and a fly self-prior moves a fly simulator, to a working solution a default start cannot reach is what makes the transferable structure biological rather than simulator-specific arithmetic. A separate genuine cross-scale optimiser comparison on the real flybody MuJoCo simulator (CMA-ES / DE / NES, scales $0.1$--$0.7$; best DE relative error $0.055$ in-distribution, all optimisers degrade off-scale) confirms that recovery locks to the specific target physiology rather than producing a system-agnostic parameter set.
 
 \subsection{Cross-sim parameter prior transfer (S4.6)}
-\textbf{BAAIWorm$\to$modWorm split-clean (main-text \S3 init-transfer).} OWMD windows split $50/50$ into disjoint train/test pools ($140$ total, $70$ train / $70$ test); the optimiser (CMA-ES, $18$ iter, popsize $14$, $3$ seeds) sees train only; held-out test $W_1$ to OWMD (6 sim-agnostic eigenworm+dynamics observables, aggregate sum, MAD-normalised) reported below. The cross-sim prior transfers per-biophysical-class coefficient-of-variation (per-dim CMA $\sigma{=}\mathrm{clip}(0.1+0.12\,\mathrm{CV}_{\rm class},0.04,1.2)$), \emph{not} raw parameter values; class map \texttt{gap}$\to$\texttt{gj}, \texttt{syn}$\to$\texttt{syn}, $\{$Cm,Gleak,$\tau$,Eleak$\}\to$\texttt{passive}, $g_{\rm in}\to$\texttt{ion}, \texttt{mus}$\to$\texttt{wout}.
+\textbf{BAAIWorm$\to$modWorm, real Cook-ODE rollout (main-text \S\ref{sec:init_transfer} init-transfer; canonical run).} Over $N{=}16$ independent held-out starts ($40$ CMA iterations each, init scale $0.3$), scored on a disjoint test-seed pool with a real modWorm Cook-ODE rollout, a BAAIWorm-derived per-biophysical-class soft prior is compared against the simulator's own default init on the aggregate held-out behaviour distance to real OWMD. The cross-sim prior transfers per-biophysical-class coefficient-of-variation (per-dim CMA $\sigma$ shaped by class CV), \emph{not} raw parameter values; class map \texttt{gap}$\to$\texttt{gj}, \texttt{syn}$\to$\texttt{syn}, $\{$Cm,Gleak,$\tau$,Eleak$\}\to$\texttt{passive}, $g_{\rm in}\to$\texttt{ion}, \texttt{mus}$\to$\texttt{wout}.
 
 \begin{table}[H]\centering\small
-\caption{BAAIWorm$\to$modWorm soft-prior init-transfer, held-out test $W_1$ (3 seeds, $60$ test rollouts each). Lower is better; \% is improvement vs.\ random arm.}
-\begin{tabular}{lcccc}\toprule
-Arm & train $W_1$ (mean) & test $W_1$ (mean$\pm$SD) & test$-$train gap & \% vs.\ random \\\midrule
-random        & 17.344 & $21.399\pm0.061$ & 4.056 & --- \\
-xsim\_prior   & 15.946 & $\mathbf{19.656\pm0.356}$ & 3.710 & $\mathbf{+8.15\%}$ \\
-own\_default  & 16.233 & $20.043\pm0.198$ & 3.810 & $+6.34\%$ \\\bottomrule
+\caption{BAAIWorm$\to$modWorm soft-prior init-transfer, held-out behaviour distance to real OWMD ($N{=}16$ held-out starts, real Cook-ODE rollout). Lower is better. The prior beats the simulator's own default init on $13/16$ starts (one-sided Wilcoxon $p{=}0.025$).}
+\begin{tabular}{lccc}\toprule
+Arm & held-out $d_{\rm real}$ (mean) & $95\%$ CI & starts prior-better \\\midrule
+own default  & 3.370 & $[2.30,4.46]$ & --- \\
+xsim\_prior  & $\mathbf{2.295}$ & $[1.52,3.26]$ & $\mathbf{13/16}$ ($p{=}0.025$) \\\bottomrule
 \end{tabular}
 \end{table}
-The cross-sim (BAAIWorm-derived) prior edges out even the simulator's own default prior on held-out test. \textbf{Caveats:} informed-not-exact class map; modWorm 30-d Cook ODE substrate ceiling means the absolute $W_1$ floor is substrate-limited (compare arms, not floors); the transfer demonstrated here is between two simulators of the same species (S4.5). \textbf{flybody self-prior:} FlyGym$\to$flybody same-species prior $L$ $0.01085\to0.001166$ ($9.305\times$; $126\to515$-d CMA). A hard-init linear projection gives \emph{negative} transfer (rel $-0.127$); only the soft per-axis-$\sigma$ prior transfers, because it lets the optimiser walk away from a mis-pinned location.
+The cross-sim (BAAIWorm-derived) prior beats the simulator's own default init on held-out real data ($13/16$ starts, one-sided Wilcoxon $p{=}0.025$); these are the same numbers reported in main-text \S\ref{sec:init_transfer}. \textbf{Caveats:} informed-not-exact class map; modWorm 30-d Cook ODE substrate ceiling means the absolute floor is substrate-limited (compare arms, not floors); the transfer demonstrated here is between two simulators of the same species (S4.5). \textbf{flybody self-prior:} FlyGym$\to$flybody same-species prior $L$ $0.01085\to0.001166$ ($9.305\times$; $126\to515$-d CMA). A hard-init linear projection gives \emph{negative} transfer (rel $-0.127$); only the soft per-axis-$\sigma$ prior transfers, because it lets the optimiser walk away from a mis-pinned location.
 
 \paragraph{Per-channel attribution for unc-1 / unc-9 / unc-43.}
 To verify that the strain-specific channel selection of \S 3.8 is not the same 4 channels recurring under random permutation, we report below the top-ranked observable channels per strain.
@@ -259,6 +258,14 @@ FlyGym $T{\in}\{100,300,500,1000\}$ PGOB closeness $\{0.501,0.404,0.409,0.496\}$
 
 \subsection{Cross-scale recovery (S4.12)}
 Across-seed $\sigma$ at $s_{\rm src}{=}0.3\to s_{\rm tgt}{=}1.0$: 0.065 (relative spread $0.7\%$). \textbf{Genuine cross-scale optimiser comparison.} On the real flybody MuJoCo simulator, CMA-ES / DE / NES were compared at scales $\{0.1,0.3,0.5,0.7\}$ (25 generations, popsize $12$, $50$-d random subspace, identical eval budget): DE reaches the best in-distribution recovery (relative error $0.055$) and all optimisers degrade off-scale, confirming that calibration locks to the specific target physiology rather than producing a scale-universal parameter set. This is the cross-scale counterpart to the same-species prior-transfer evidence (S4.5).
+
+\subsection{Amortized neural-posterior back-end (S4.13)}
+\label{si:sbi}
+The engine-agnostic claim of the main text (\S\ref{sec:sbi_engine}) is supported by instantiating the same behaviour-only formulation with an amortized neural posterior estimator (NPE-MAF) in place of the black-box optimiser, on two simulators. The estimator is a masked-autoregressive-flow conditional density estimator trained with the \texttt{sbi} toolkit on simulations drawn from each simulator's random-start prior. \textbf{modWorm}: $30$-d parameter vector, $6$ trajectory observables, BoxUniform prior over the scale-$1.0$ random-init region; $N{=}15{,}000$ requested simulations of which $14{,}993$ were valid; posterior-predictive reproduction of the ground-truth observation reaches mean absolute observable difference $1.36\times10^{-3}$ across the six observables (per-observable \texttt{bend\_amp} $3.8\times10^{-3}$, \texttt{bend\_mean} $4.3\times10^{-3}$, \texttt{head\_freq} $0$, \texttt{propagation} $1.5\times10^{-5}$, \texttt{speed\_proxy}/\texttt{turn\_rate\_proxy} $6.4\times10^{-5}$). \textbf{FlyGym v2}: $48$-d gain vector, $10$ observables, BoxUniform walkable band $\pm30\%$ of the canonical gains; $N{=}6{,}000$ valid simulations; the posterior mean lands at relative error $0.018$ to the canonical $\theta^{*}$.
+
+\textbf{Density-estimator comparison (held-out NLL).} On the same simulation pool per simulator, three density estimators were compared by held-out negative log-probability (lower is a better fit): a neural spline flow (NSF), the masked autoregressive flow (MAF, the estimator used for the recovery above), and a mixture-density network (MDN). modWorm: NSF $46.3$ $<$ MAF $49.8$ $<$ MDN $51.6$ (held-out $N{=}2{,}999$ of $14{,}993$). FlyGym v2: NSF $157.3$ $<$ MAF $161.5$ $<$ MDN $165.8$ (held-out $N{=}1{,}200$ of $6{,}000$). The NSF $>$ MAF $>$ MDN ordering is the expected density-estimation hierarchy and carries over directly to the PGOB setting (main-text Table~\ref{tab:sbi_baseline}).
+
+\textbf{Per-dimension simulation-based calibration.} Rank-based simulation-based calibration (SBC) on the trained posterior is consistent (per-dimension KS at $\alpha{=}0.05$) on $10/30$ modWorm and $22/48$ FlyGym dimensions, concentrated on the well-identified, behaviour-sensitive axes; the remaining axes are the weakly-identified directions that a behaviour-only observation does not constrain. The load-bearing evidence for the back-end is the posterior-predictive behaviour recovery above, with SBC reported as a calibration diagnostic on the identified axes.
 
 \subsection{Three-segment recovery decomposition (S4.18)}
 \label{si:three_segment}
@@ -439,11 +446,11 @@ The production protocol is PGOB-hybrid: warm-start on the simulator's own behavi
 \begin{center}\small
 \begin{tabular}{lccccl}\toprule
 sim $\to$ real & split (tr/val/ho) & warm-start $d_{\rm real}$ & min $d_{\rm real}$ & min iter & best dip \\\midrule
-modWorm $\to$ OWMD-N2 & $24/8/8$ & $0.1746$ & $0.1728$ & $9$ & $-1.0\%$ \\
+modWorm $\to$ OWMD-N2 (Cook-ODE $W_1$) & $24/8/8$ & $13.314$ & $13.169$ & $38$ & $-1.1\%$ \\
 FlyGym v2 $\to$ Janelia & $60/20/20$ & $0.2154$ & $0.2034$ & $16$ & $-5.5\%$ \\
 BAAIWorm $\to$ OWMD-N2 & $24/8/8$ & $0.1753$ & $0.1717$ & $9$ & $-2.0\%$ \\\bottomrule
 \end{tabular}
 \end{center}
-\textbf{The fine-tune gain is mild.} On all three simulators the real fine-tune produces a held-out improvement over the warm-start, with the minimum reached well into the trajectory (iter $9$--$16$), not at the first step. The gain is mild because the warm-start already lies close to the best real fit the substrate can reach: a cold-start real fit converges to the same floor the warm-start fine-tune approaches, so the cross-modal gap is largely irreducible and the fine-tune crosses a small part of it. The numbers are the measured size of the available real-alignment gain.
+\textbf{The fine-tune gain is mild.} On all three simulators the real fine-tune produces a held-out improvement over the warm-start, with the minimum reached well into the trajectory (iter $9$--$38$), not at the first step. The gain is mild because the warm-start already lies close to the best real fit the substrate can reach: a cold-start real fit converges to the same floor the warm-start fine-tune approaches, so the cross-modal gap is largely irreducible and the fine-tune crosses a small part of it. The numbers are the measured size of the available real-alignment gain.
 
 \end{document}
