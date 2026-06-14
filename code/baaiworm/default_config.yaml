@@ -1,0 +1,95 @@
+# BAAIWorm 权重恢复实验 - 主配置
+
+# 项目路径（部署到服务器后修改）
+project_root: "/root/BAAIWorm-main"
+build_dir: "/root/BAAIWorm-main/build_headless/build"
+output_dir: "/root/BAAIWorm-main/recovery/output"
+
+# 数据路径
+data:
+  group_name: "video_offline"
+  abs_circuit: "eworm/ghost_in_mesh_sim/data/tuned/video_offline/video_offline_abscircuit.pkl"
+  wout: "eworm/ghost_in_mesh_sim/data/tuned/video_offline/video_offline_wout.pkl"
+  config_json: "eworm/ghost_in_mesh_sim/data/tuned/video_offline/video_offline_config.json"
+  standard_input: "eworm/ghost_in_mesh_sim/data/state/worm_states_300_220428-152601.json"
+
+# 仿真参数
+simulation:
+  neuron_sim_dt: 1.6667  # 5/3 ms
+  motion_sim_dt: 100     # ms (10 Hz)
+  tstop: 10000000
+  v_init: -65
+  secondorder: 0
+  n_init_steps: 30
+  n_sim_steps: 800       # 正式仿真步数
+  n_sim_steps_fast: 200  # 快速仿真（用于优化迭代）
+
+# 打乱参数
+perturbation:
+  sweep_levels: [0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50]
+  n_seeds: 5
+  base_seed: 42
+  # 组合打乱时的降低系数
+  combo_reduction: 0.6  # 组合打乱时每类噪音 = 单独阈值 * combo_reduction
+
+# 梯度下降配置
+gradient_descent:
+  lr_w: 1.0e-5
+  lr_x: 3.0e-2
+  lr_decay: 0.008  # 1/125
+  use_adam: true
+  patience: 3
+  n_iterations: 100
+  dt: 1.6667
+  tstop: 5000
+  ngpu: 1
+  K_max_t: 80
+  K_nblock: 136
+
+# Wout 梯度下降配置
+wout_gd:
+  lr: 1.0e-3
+  weight_decay: 1.0e-5
+  n_iterations: 2000
+
+# 强化学习配置
+reinforcement_learning:
+  pca_dim: 50
+  max_steps: 50
+  sim_steps: 200
+  ppo_lr: 3.0e-4
+  n_steps: 2048
+  batch_size: 64
+  n_epochs: 10
+  gamma: 0.99
+  net_arch: [256, 256]
+  n_iterations: 100000
+
+# 逆强化学习配置
+inverse_rl:
+  n_reward_iterations: 500
+  reward_lr: 1.0e-3
+  reward_mix_alpha: 0.5
+  pca_dim: 50
+  max_steps: 50
+  sim_steps: 200
+  ppo_lr: 3.0e-4
+  n_iterations: 50000
+
+# 评估配置
+evaluation:
+  zigzag_min_period: 5
+  zigzag_max_period: 50
+  behavior_threshold: 0.3
+  n_permutations: 10000
+
+# CMA-ES 配置（路线 A 主力）
+cmaes:
+  population_size: 20
+  sigma0: 0.1
+  pca_dim: 50
+  max_fevals: 5000
+  max_generations: 200
+  sim_steps: 300
+  loss_route: "trajectory"   # "trajectory"(路线A) 或 "muscle"(路线B)
+  seed: 42

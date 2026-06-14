@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the accompanying paper."
+title: "PGOB: Parameter Generation by Observed Behavior"
+abstract: >-
+  A behaviour-only framework that generates working parameters for whole-organism
+  biophysical simulators of C. elegans and Drosophila (BAAIWorm, modWorm, flybody,
+  FlyGym) from observed kinematic trajectories alone, together with a Jacobian
+  sensitivity map attributing each behavioural residual to a specific simulator
+  mechanism. The generated parameters carry species-specific biological information,
+  validated prospectively against held-out mutant strains, a second laboratory, and
+  independent neural recordings.
+version: "1.0.0"
+license: MIT
+repository-code: "https://github.com/ChenxiHeCam/Parameter-Generation-by-Observed-Behavior"
+authors:
+  - family-names: "He"
+    given-names: "Chenxi"
+    email: "ch2067@cam.ac.uk"
+    affiliation: "University of Cambridge"
+keywords:
+  - parameter identifiability
+  - whole-organism simulation
+  - behaviour-only parameter generation
+  - C. elegans
+  - Drosophila
+  - Jacobian attribution
