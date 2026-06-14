@@ -18,26 +18,26 @@ This SI accompanies the main paper and provides extended methods, extended resul
 \label{si:hardware}
 %==========================================================
 
-\textbf{Compute.} Cloud A40 GPU instances; RTX 4090D for SBI training; RTX 3080 Ti secondary. The main sweep -- 10 configurations $\times$ 3 seeds $\times$ 30 generations $\times$ 16 population $=14{,}400$ rollouts -- consumed $\approx 4.8\times 10^4$ rollout-seconds ($\approx 27$ wall-hours). Cumulative compute: $\approx 307$ CPU-days (BAAIWorm 142, flybody 88, modWorm 41, FlyGym 36). The 5d eigenworm CPG 5th-simulator gradient test added $\approx 1.1$ s wall ($N{=}100$ rollouts $\times$ 10 observables; reduced-substrate is cheap). Every reported result is reproducible from \texttt{python run\_calibration.py --sim \{worm,modworm,fly,flygym,eigenworm5d\} --scale s --seed k --opt cmaes\_sep}.
+\textbf{Compute.} Cloud A40 GPU instances; RTX 4090D and RTX 3080 Ti secondary. The main sweep -- 10 configurations $\times$ 3 seeds $\times$ 30 generations $\times$ 16 population $=14{,}400$ rollouts -- consumed $\approx 4.8\times 10^4$ rollout-seconds ($\approx 27$ wall-hours). Cumulative compute: $\approx 307$ CPU-days (BAAIWorm 142, flybody 88, modWorm 41, FlyGym 36). Every reported result is reproducible from \texttt{python run\_calibration.py --sim \{worm,modworm,fly,flygym\} --scale s --seed k --opt cmaes\_sep}.
 
 \subsection{Cohort-size notation (S1.1)}
-$n{=}3,10,30$ = random SPSA seeds (F1 ablation context); $n{=}4,40,160$ = starting conditions (held-out OOD context); $n{=}43$ = held-out mutant strains (Yemini prospective); $n{=}15$ = BAAIWorm ablation-type rank test; $n{=}5$/level ($30$ cells) = weight-corruption sweep; $N{=}200$ = OWMD-Schafer worms; $B{=}1000$ = bootstrap resamples. All ambiguous in-text occurrences are tagged with explicit unit names.
+$n{=}5,10$ = random SPSA seeds (weight-corruption and F1 ablation contexts); $n{=}4,40,160$ = starting conditions (held-out OOD context); $n{=}43$ = held-out mutant strains (Yemini prospective); $n{=}15$ = BAAIWorm ablation-type rank test; $n{=}5$/level ($30$ cells) = weight-corruption sweep; $N{=}200$ = OWMD-Schafer worms; $B{=}1000$ = bootstrap resamples. All ambiguous in-text occurrences are tagged with explicit unit names.
 
 \textbf{Per-simulator hyperparameters.}
 
 \begin{table}[H]\centering\small
-\begin{tabular}{lcccc}\toprule
-Item & BAAIWorm & flybody & modWorm & 5d eigenworm \\\midrule
-Param dim & 5 & 515 & 30/50 & 5 \\
-Search-space transform & linear $[0.5,2]$ & log-space mult. & linear & linear \\
-Integrator / $dt$ & RK4 1ms & MuJoCo 0.1ms & implicit-Euler 0.5ms & Euler 10ms \\
-Output rate & 30 Hz & 10 kHz & 25 Hz & 100 Hz \\
-Rollout length & 10 s & 5 s & 40 s & 100 s \\
-Optimiser & SPSA + CMA & CMA-ES sep & CMA-ES sep & default-vs-pool \\
-Population $\lambda$ & 8 / 8 & 16 & 16 & --- \\
-Generations & 30 & 30 & 30 & --- \\
-$\sigma_0$ & 0.05 & 0.05 log-space & 0.05 & --- \\
-Multi-cond avg $C$ & $[8,16]$ & 8 snippets & 8 seeds & 100 \\
+\begin{tabular}{lccc}\toprule
+Item & BAAIWorm & flybody & modWorm \\\midrule
+Param dim & 5 & 515 & 30/50 \\
+Search-space transform & linear $[0.5,2]$ & log-space mult. & linear \\
+Integrator / $dt$ & RK4 1ms & MuJoCo 0.1ms & implicit-Euler 0.5ms \\
+Output rate & 30 Hz & 10 kHz & 25 Hz \\
+Rollout length & 10 s & 5 s & 40 s \\
+Optimiser & SPSA + CMA & CMA-ES sep & CMA-ES sep \\
+Population $\lambda$ & 8 / 8 & 16 & 16 \\
+Generations & 30 & 30 & 30 \\
+$\sigma_0$ & 0.05 & 0.05 log-space & 0.05 \\
+Multi-cond avg $C$ & $[8,16]$ & 8 snippets & 8 seeds \\
 \bottomrule
 \end{tabular}
 \caption{Per-simulator consolidated hyperparameter reference.}
@@ -57,13 +57,13 @@ Multi-cond avg $C$ & $[8,16]$ & 8 snippets & 8 seeds & 100 \\
 \begin{tabular}{p{0.30\textwidth} p{0.45\textwidth} p{0.16\textwidth}}\toprule
 Finding & Caveat / scope & Section \\\midrule
 4-config non-scalar loss falsification & Aggregate baseline dominates; no tested loss configuration dominates. & S2.5 \\
-F1 ablation $n{=}30$ neural control & Pre-registered NULL (Wilcoxon $p{=}0.734$, $d{=}0.14$). Pure-trajectory loss is not beaten by neural-augmented loss -- positive for the framework. (S4.4.1) & S2.9 \\
+F1 ablation neural control ($10$ paired seeds, $n{=}20$ runs) & Pre-registered NULL (Wilcoxon $p{=}0.734$, $d{=}0.14$). Pure-trajectory loss is not beaten by neural-augmented loss -- positive for the framework. (S4.4.1) & S2.9 \\
 modWorm three-segment & Eigenworm-variance channels unmovable even at expert arm: substrate ceiling, $-9.9\%$ aggregate (S4.18). & S4.18 \\
 flybody $W_1$ three-segment & Honest negative: all three arms within $<1.5\%$ ($13.254/13.454/13.348$); \texttt{walk\_imitation} MoCap controller dominates trajectory, init signal carried in loss space ($9.3\times$), not $W_1$ (S4.18). & S4.18 \\
 Extended-budget hybrid fine-tune & Useful but mild ($-1.0\%$/$-5.5\%$/$-2.0\%$ held-out dips): warm-start near irreducible sim$\leftrightarrow$real floor (S4.23). & S4.23 \\
 flybody default-vs-PGOB & $0/9$ significant ($N{=}45$/arm): good default $\Rightarrow$ correct NULL (S4.21). & S4.21 \\
 41-experiment GAN-as-loss collapse & Val-loss $\geq 2\times$ regression across 5 D-architectures. & S2.10 \\
-Same-species parameter-prior transfer & Genuine same-species rescue (BAAIWorm$\to$modWorm $N{=}16$, flybody self-prior $9.3\times$); cross-species priors mislead. No cross-species transfer claim. & S4.5 \\
+Same-species parameter-prior transfer & Genuine same-species rescue (BAAIWorm$\to$modWorm $N{=}16$, flybody self-prior $9.3\times$); transfer demonstrated between two simulators of the same species only. & S4.5 \\
 flybody FULL-split parity & TEST split $9/10$ closer at $+1.75\%$; FULL split caveated. & S4.2 \\
 Loss-family invariance & Reported as an observation in the operational sense, not a Fisher / Cram\'er--Rao claim. & S4.7 \\
 \bottomrule
@@ -74,7 +74,7 @@ Loss-family invariance & Reported as an observation in the operational sense, no
 4-configuration loss-design falsification on BAAIWorm; aggregate baseline dominates 3/5 metrics; no tested configuration dominates.
 
 \subsection{F1 ablation control (S2.9)}
-The $n{=}30$ neural-ablation control (10 paired seeds) returns a pre-registered NULL (Wilcoxon $p{=}0.734$, $d{=}0.14$); pure-trajectory loss is not beaten by neural-augmented loss. Full statistics in S4.4.1.
+The neural-ablation control ($10$ paired seeds, $n{=}20$ runs) returns a pre-registered NULL (Wilcoxon $p{=}0.734$, $d{=}0.14$); pure-trajectory loss is not beaten by neural-augmented loss. Full statistics in S4.4.1.
 
 \subsection{41-experiment GAN-as-loss negative (S2.10)}
 All 41 collapse: val-loss regresses $\geq 2\times$ while D-loss drops $<0.01$. A multi-behaviour discriminator on closed-loop FlyGym extends the same negative: a discriminator trained jointly on four behaviours does not beat single-task discriminators ($\Delta{\approx}-0.01$ in behavioural closeness; discriminator validation accuracy near chance, $\approx 0.43$--$0.55$), so the behaviour-conditional GAN-as-loss objective is not supported in the closed-loop fly either, consistent with the worm-side GAN-as-loss negative.
@@ -143,7 +143,7 @@ Bootstrap $B{=}1000$ on OWMD-N2: $D_1<D_2<D_3$ in $1000/1000$.
 \textbf{flybody walking TEST split}: $9/10$ closer at $+1.75\%$ ($60$ train / $20$ val / $20$ holdout). FULL-split caveat: default already strong; PGOB room marginal under FULL split. \textbf{Flight wing-beat} $227.92\pm 5.59$ Hz. \textbf{FlyGym 5-behaviour}: $5/5$ inside biological CV. \textbf{Adhesion phenotype}: 3-of-3 / 0-of-3 split.
 
 \subsection{Yemini 43-strain (S4.3)}
-\textbf{In-sample reference}: $\bar\rho{=}0.558$, median $0.400$, $43/43$ positive. \textbf{LOSO} (main text Fig HERO-5): mean-train $0.684$, median-train $0.628$, strain-shuffle $0.527$.
+\textbf{In-sample reference}: $\bar\rho{=}0.558$, median $0.400$, $43/43$ positive. \textbf{LOSO} (main-text Table~\ref{tab:loso_summary}): mean-train $0.684$, median-train $0.628$, strain-shuffle $0.527$.
 
 \textbf{Pre-registered full $23$-feature LOSO robustness.} To confirm the $4$-feature headline is not an artefact of post-hoc feature selection, we re-ran the leave-one-strain-out test on the \emph{pre-registered full $23$-feature} set (fixed before scoring; the $4$ active features are a strict subset). Mean-training-delta Spearman $\bar\rho{=}0.525$ (median $0.585$, SD $0.211$) vs.\ strain-shuffle null $\bar\rho_0{=}0.338$ (median $0.352$, SD $0.114$), giving $\Delta{=}{+}0.187$ with $27/28$ strains $\rho{>}0$. The mutant-prediction signal is therefore preserved across the full deposited metric space, and the $4$- and $23$-feature analyses are mutually consistent. \emph{Caveat}: this full-feature LOSO ran on the $28$ mutant strains whose Yemini HDF5 features were retrievable from source ($14$ of the $43$ strain folders lacked retrievable feature data); it is a $28$-strain confirmation rather than the full $43$-strain panel. Mutant differential $N{=}12$ protocol: strain-specific 5/4/4 deviations.
 
@@ -187,9 +187,9 @@ L5 random-wt & 4 & 0.41267 & 0.37943 & --- & $-8.1\%$ & 4233 \\\midrule
 
 \textbf{L5 row note.} The L5 (random-weight) corruption is applied in the synthetic-loss space; its $L_0$ anchor ($0.274$ random-weight vs.\ $0.125$ clean-default) is the BAAIWorm random-init anchor referenced by the three-segment decomposition (S4.18). The $L_{\rm rec.\ clean}$ column is undefined for L5 because there is no clean reference for a fully-random-weight cell.
 
-\subsection{F1 ablation $n{=}30$ -- pre-registered NULL (S4.4.1)}
+\subsection{F1 ablation ($10$ paired seeds) -- pre-registered NULL (S4.4.1)}
 
-The F1 neural-ablation control runs over $10$ paired matched seeds ($n{=}30$ rollout budget): mode-a (pure-trajectory loss) vs.\ mode-b (neural-augmented loss).
+The F1 neural-ablation control runs over $10$ paired matched seeds ($n{=}20$ runs): mode-a (pure-trajectory loss) vs.\ mode-b (neural-augmented loss).
 
 \begin{itemize}\itemsep0pt
 \item mode-a mean behavioural loss $0.05456$; mode-b mean $0.05758$.
@@ -201,7 +201,7 @@ The F1 neural-ablation control runs over $10$ paired matched seeds ($n{=}30$ rol
 \textbf{Verdict: NULL} (no significant difference, $p{=}0.734$). This is a \emph{positive} result for the framework's central premise: pure trajectory observables suffice, and adding internal neural signal yields no detectable gain.
 
 \subsection{Genuine same-species parameter-prior transfer (S4.5)}
-The load-bearing evidence that PGOB recovers biology-governed parameter structure (rather than fitting arbitrary numbers) is the genuine-rollout same-species soft-prior rescue, detailed in S4.6. A parameter prior derived from one simulator of a species transfers to a different simulator of the \emph{same} species: BAAIWorm$\to$modWorm on the real Cook-ODE ($N{=}16$ held-out test rollouts, $13/16$ prior-better than random, $p{=}0.025$), and the flybody self-prior (FlyGym$\to$flybody, $9.3\times$ loss improvement). Cross-species priors, by contrast, mislead, so the transferable structure is species-specific. A separate genuine cross-scale optimiser comparison on the real flybody MuJoCo simulator (CMA-ES / DE / NES, scales $0.1$--$0.7$; best DE relative error $0.055$ in-distribution, all optimisers degrade off-scale) confirms that recovery locks to the specific target physiology rather than producing a system-agnostic parameter set.
+The load-bearing evidence that PGOB recovers biology-governed parameter structure (rather than fitting arbitrary numbers) is the genuine-rollout same-species soft-prior rescue, detailed in S4.6. A parameter prior derived from one simulator of a species transfers to a different simulator of the \emph{same} species: BAAIWorm$\to$modWorm on the real Cook-ODE ($N{=}16$ held-out test rollouts, $13/16$ prior-better than random, $p{=}0.025$), and the flybody self-prior (FlyGym$\to$flybody, $9.3\times$ loss improvement). That a prior learned on one worm simulator moves a different worm simulator, and a fly self-prior moves a fly simulator, to a working solution a default start cannot reach is what makes the transferable structure biological rather than simulator-specific arithmetic. A separate genuine cross-scale optimiser comparison on the real flybody MuJoCo simulator (CMA-ES / DE / NES, scales $0.1$--$0.7$; best DE relative error $0.055$ in-distribution, all optimisers degrade off-scale) confirms that recovery locks to the specific target physiology rather than producing a system-agnostic parameter set.
 
 \subsection{Cross-sim parameter prior transfer (S4.6)}
 \textbf{BAAIWorm$\to$modWorm split-clean (main-text \S3 init-transfer).} OWMD windows split $50/50$ into disjoint train/test pools ($140$ total, $70$ train / $70$ test); the optimiser (CMA-ES, $18$ iter, popsize $14$, $3$ seeds) sees train only; held-out test $W_1$ to OWMD (6 sim-agnostic eigenworm+dynamics observables, aggregate sum, MAD-normalised) reported below. The cross-sim prior transfers per-biophysical-class coefficient-of-variation (per-dim CMA $\sigma{=}\mathrm{clip}(0.1+0.12\,\mathrm{CV}_{\rm class},0.04,1.2)$), \emph{not} raw parameter values; class map \texttt{gap}$\to$\texttt{gj}, \texttt{syn}$\to$\texttt{syn}, $\{$Cm,Gleak,$\tau$,Eleak$\}\to$\texttt{passive}, $g_{\rm in}\to$\texttt{ion}, \texttt{mus}$\to$\texttt{wout}.
@@ -215,7 +215,7 @@ xsim\_prior   & 15.946 & $\mathbf{19.656\pm0.356}$ & 3.710 & $\mathbf{+8.15\%}$ 
 own\_default  & 16.233 & $20.043\pm0.198$ & 3.810 & $+6.34\%$ \\\bottomrule
 \end{tabular}
 \end{table}
-The cross-sim (BAAIWorm-derived) prior edges out even the simulator's own default prior on held-out test. \textbf{Caveats:} informed-not-exact class map; modWorm 30-d Cook ODE substrate ceiling means the absolute $W_1$ floor is substrate-limited (compare arms, not floors); same-species only -- cross-species priors mislead (S4.5). \textbf{flybody self-prior:} FlyGym$\to$flybody same-species prior $L$ $0.01085\to0.001166$ ($9.305\times$; $126\to515$-d CMA). A hard-init linear projection gives \emph{negative} transfer (rel $-0.127$); only the soft per-axis-$\sigma$ prior transfers, because it lets the optimiser walk away from a mis-pinned location.
+The cross-sim (BAAIWorm-derived) prior edges out even the simulator's own default prior on held-out test. \textbf{Caveats:} informed-not-exact class map; modWorm 30-d Cook ODE substrate ceiling means the absolute $W_1$ floor is substrate-limited (compare arms, not floors); the transfer demonstrated here is between two simulators of the same species (S4.5). \textbf{flybody self-prior:} FlyGym$\to$flybody same-species prior $L$ $0.01085\to0.001166$ ($9.305\times$; $126\to515$-d CMA). A hard-init linear projection gives \emph{negative} transfer (rel $-0.127$); only the soft per-axis-$\sigma$ prior transfers, because it lets the optimiser walk away from a mis-pinned location.
 
 \paragraph{Per-channel attribution for unc-1 / unc-9 / unc-43.}
 To verify that the strain-specific channel selection of \S 3.8 is not the same 4 channels recurring under random permutation, we report below the top-ranked observable channels per strain.
@@ -260,9 +260,6 @@ FlyGym $T{\in}\{100,300,500,1000\}$ PGOB closeness $\{0.501,0.404,0.409,0.496\}$
 \subsection{Cross-scale recovery (S4.12)}
 Across-seed $\sigma$ at $s_{\rm src}{=}0.3\to s_{\rm tgt}{=}1.0$: 0.065 (relative spread $0.7\%$). \textbf{Genuine cross-scale optimiser comparison.} On the real flybody MuJoCo simulator, CMA-ES / DE / NES were compared at scales $\{0.1,0.3,0.5,0.7\}$ (25 generations, popsize $12$, $50$-d random subspace, identical eval budget): DE reaches the best in-distribution recovery (relative error $0.055$) and all optimisers degrade off-scale, confirming that calibration locks to the specific target physiology rather than producing a scale-universal parameter set. This is the cross-scale counterpart to the same-species prior-transfer evidence (S4.5).
 
-\subsection{Generalisation T1/T2/T3 (S4.13)}
-T2 modWorm 4 behaviours, 20/20 R-grade improved.
-
 \subsection{Three-segment recovery decomposition (S4.18)}
 \label{si:three_segment}
 
@@ -303,18 +300,18 @@ active\_frac & 0.0102 & 0.000 & 0.000 & \textbf{100\% (exact OWMD match)} \\
 path\_curv & 5.786 & 5.861 & 5.862 & substrate ceiling \\\bottomrule
 \end{tabular}
 \end{center}
-The eigenworm-variance channels are unmovable even at the expert arm: a substrate-physical ceiling of the 30-d Cook ODE. \texttt{active\_frac} is the one channel PGOB closes exactly. \emph{Aggregation note:} the aggregate-sum $W_1$ weights observables by raw magnitude, so the large eigenworm-variance channels dominate and the modWorm aggregate climb is $-0.7\%$; the robust summaries are the per-observable improved-count ($2/6$) and equal-weight mean ($+16.25\%$).
+The eigenworm-variance channels are unmovable even at the expert arm: a substrate-physical ceiling of the 30-d Cook ODE. \texttt{active\_frac} is the one channel PGOB closes exactly. \emph{Aggregation note:} the aggregate-sum $W_1$ weights observables by raw magnitude, so the large eigenworm-variance channels dominate and the modWorm aggregate recovery fraction is $-9.9\%$ (random $13.84\to$ pgob $13.94\to$ expert $12.85$); the robust summaries are the per-observable improved-count ($2/6$) and equal-weight mean ($+16.25\%$).
 
 %==========================================================
 \section{Five Init Modes and Composition (S5)}
 \label{si:init_modes}
 %==========================================================
 
-\subsection{Five-init decision tree (S5.1)}
-Body-plan match $\to$ hard-init; dim mismatch $>1$ OOM $\to$ soft-PCA-init; cross-species $\to$ default-init.
+\subsection{Init-mode decision tree (S5.1)}
+Body-plan match $\to$ hard-init; same-species dim mismatch $>1$ OOM $\to$ soft-PCA-init; same simulator, new lab $\to$ warm-start hybrid; no matching $\theta^{*}$ $\to$ random init at $s{=}1$.
 
 \subsection{Joint multi-init calibration (S5.2)}
-flybody off-diagonal/diagonal $=11.2$; modWorm $1.13$ universal. The FlyGym v2 closed-loop 4$\times$4 cross-task panel (96 cells, diag/off=1.016) further refines this picture; see Fig.~\ref{fig:s6_flygym_4x4}.
+An early two-task flybody analysis suggested a large task-specificity ratio (off-diagonal/diagonal $\approx 11.2$), but this is not borne out as a general property: modWorm recovers near-universally across behaviours (ratio $1.13$), and the FlyGym closed-loop four-task cross-task panel (80 genuine-rollout cells over five seeds) gives an on/off-diagonal ratio of $0.999$ (95\% CI $[0.994, 1.002]$), i.e.\ recovery transfers across tasks rather than being task-specific (Fig.~\ref{fig:s6_flygym_4x4}). We therefore treat the $11.2$ figure as a single-simulator artefact of the two-task flybody benchmark, not a cross-simulator finding.
 
 %==========================================================
 \section{Reproducibility (S6)}
@@ -341,14 +338,13 @@ BAAIWorm code & github.com/BAAI-DCAI/BAAIWorm@v1.0 & \texttt{16821c01a75294c1b0b
 modWorm code & github.com/ShlizermanLab/modWorm & \texttt{7c27d2e7d9a99312112956204ded10d6ff39a58639a2a41a649a2afb2f2c8cb3} & --- & 19 MB \\
 flybody code & github.com/TuragaLab/flybody@v1.0 & \texttt{8c5bd343c1cf805234c039f35b22a23a4c2fc53bdc65fb6c8561311668f5029f} & --- & 142 MB \\
 PGOB code (ours) & github.com/ChenxiHeCam/Parameter-Generation-by-Observed-Behavior@v1.0-PGOB & \texttt{93fa70fa992e38a70366ffd869ae732c4a33757f969587fbfffd857f10e173b2} & --- & 124 MB \\
-5d eigenworm CPG gradient deposit & Zenodo derived-data deposit & \texttt{<live-file SHA-256 at submission>} & --- & 5 KB \\
 Derived data (ours) & Zenodo (archived on acceptance, GitHub-tag \texttt{v1.0-PGOB}) & \texttt{d9647727caf80aaad996a364fadae945b339f508cb7e2568ee3187db5da26c73} & --- & 860 MB \\\bottomrule
 \end{tabular}
-\caption{Data availability table, including the 5d eigenworm CPG gradient deposit.}
+\caption{Data availability table.}
 \end{table}
 
 \subsection{Code availability (S6.2)}
-MIT-licensed at \url{https://github.com/ChenxiHeCam/Parameter-Generation-by-Observed-Behavior}, tag \texttt{v1.0-PGOB}. A frozen Zenodo deposit is created on acceptance via the GitHub$\to$Zenodo webhook; the archive and its DOI are not contingent on acceptance.
+MIT-licensed at \url{https://github.com/ChenxiHeCam/Parameter-Generation-by-Observed-Behavior}, tag \texttt{v1.0-PGOB}. A frozen archive of the paper, SI, code, and figures is deposited on Zenodo (DOI \texttt{10.5281/zenodo.20691878}).
 
 \subsection{Per-figure reproduction (S6.3)}
 Every main and supplementary figure is regenerated by the figure-reproduction scripts in the released repository (tag \texttt{v1.0-PGOB}); each figure's source data and the script that draws it are listed in the repository's \texttt{figures/} manifest. The reproduction is deterministic under the fixed-seed convention of S6.5.
@@ -365,9 +361,9 @@ Every main and supplementary figure is regenerated by the figure-reproduction sc
 
 \textbf{Code.} MIT at \url{https://github.com/ChenxiHeCam/Parameter-Generation-by-Observed-Behavior}, tag \texttt{v1.0-PGOB}.
 
-\textbf{Data.} All datasets public under original licences; live-file SHA-256 are posted at submission, including the 5d eigenworm gradient deposit.
+\textbf{Data.} All datasets public under original licences; live-file SHA-256 are posted at submission.
 
-\textbf{Compute.} $\approx 307$ CPU-days cumulative; 5d eigenworm CPG addition $\sim 1$ s wall.
+\textbf{Compute.} $\approx 307$ CPU-days cumulative.
 
 \textbf{Determinism.} NumPy 64-bit, 4-way SeedSequence spawn.
 
@@ -377,21 +373,21 @@ Every main and supplementary figure is regenerated by the figure-reproduction sc
 %==========================================================
 
 \begin{figure}[H]\centering\includegraphics[width=\textwidth]{figures/Fig_trajectory_compare.pdf}
-\caption{\textbf{Fig S7.0 $\mid$ Raw trajectories: original simulator default vs.\ PGOB-recovered vs.\ real biology.} Direct, unprocessed-behaviour view of what PGOB recovers. \textbf{Top row (BAAIWorm, \emph{C.\ elegans}):} body-curvature kymographs (signed turning angle along the head$\to$tail body coordinate, over time) for the original simulator default, the PGOB-recovered parameters, and a real OWMD N2 worm. Diagonal red/blue stripes are the propagating undulation wave; the recovered worm reproduces the travelling-wave structure of the real animal, whereas the default sim does not. \textbf{Bottom left (flybody, \emph{Drosophila}):} centre-of-mass walking paths over a matched frame window for default, PGOB-recovered, and the MoCap reference. \textbf{Bottom right:} cumulative forward distance travelled vs.\ time -- the default fly barely advances ($\approx 0$ net displacement), while the PGOB-recovered and real trajectories both accumulate forward distance. This panel is the intuitive companion to the quantitative feature comparison in Fig.~\ref{fig:s8_realcal}: it shows that PGOB recovery moves the raw kinematics, not just summary statistics, toward the real organism.}
+\caption{\textbf{Raw trajectories: original simulator default vs.\ PGOB-recovered vs.\ real biology.} Direct, unprocessed-behaviour view of single rollouts. \textbf{Left three panels (BAAIWorm, \emph{C.\ elegans}):} body-curvature kymographs (signed turning angle along the head$\to$tail body coordinate, over time) for the original simulator default, the PGOB-recovered parameters, and a real OWMD N2 worm; the red/blue banding is the propagating undulation wave, and all three rollouts express the worm-like travelling-wave pattern. \textbf{Right panel (flybody, \emph{Drosophila}):} cumulative forward distance travelled over a matched frame window -- the default fly barely advances ($\approx 0$ net displacement), while the PGOB-recovered and real (MoCap) trajectories both accumulate forward distance and track each other closely. This panel is the intuitive companion to the quantitative per-channel feature comparison in Fig.~\ref{fig:s8_realcal}.}
 \label{fig:s7_0_trajectory}
 \end{figure}
 
 \begin{figure}[H]\centering\includegraphics[width=0.85\textwidth]{Fig17_v2_FlyGym_cross_task_matrix.pdf}
-\caption{\textbf{Fig S6 $\mid$ FlyGym v2 four-task closed-loop cross-transfer matrix.} Cross-task transfer of PGOB-recovered $\theta$ on FlyGym v2 (closed-loop sensorimotor controller, HybridTurningController variants on flat/mixed terrain plus rule-based descending). Rows: training task; columns: evaluation task. Tasks: walk-hybrid (CPG+stumbling/retraction), turn-hybrid (asymmetric descending), walk-mixed, rule-based. Cell value = closeness score (mean $\pm$ 95\% CI) of recovered $\theta^*$ evaluated on each task, aggregated across $n{=}6$ cell-level layers (one deterministic RL-baseline run plus 5 CMA-ES seeds $\{44,55,66,77,88\}$, anchored to the seed-1 closeness scale). Total 96 cells. Red squares mark within-task (diagonal) recovery. \textbf{Key statistic:} diag/off-diag closeness ratio $= 1.016$ (bootstrap 95\% CI $[1.016, 1.016]$, $n{=}2000$ resamples). Under Holm--\v{S}id\'ak multiple-comparison correction the universal-recovery hypothesis $H_{\rm universal}$: ratio $=1$ is \emph{not rejected} (FWER-adjusted $p>0.05$ for all 12 off-diagonal cells); $H_{\rm flybody}$: ratio $= 11.2$ is rejected at $>500\sigma$. Compare modWorm sparse-ODE off/diag $= 1.13$. \textbf{Interpretation:} the closed-loop NMF ratio 1.016 is lower than the same simulator's open-loop sinusoid ratio 1.189, so sensory closed-loop coupling does not, by itself, cause behaviour-specific $\theta$ recovery. flybody's 11.2 must therefore arise from target-trajectory provenance (per-task real fly kinematics) or actuator dimensionality ($\sim 3000$ vs.\ 42 DoF) rather than from dense-MuJoCo physics or RL control per se, which narrows the corresponding mechanistic claim in the Discussion.}
+\caption{\textbf{FlyGym closed-loop four-task cross-transfer matrix.} Cross-task transfer of PGOB-recovered $\theta$ on the FlyGym closed-loop sensorimotor controller (HybridTurningController variants on flat/mixed terrain plus rule-based descending). Rows: training task; columns: evaluation task. Tasks: walk-hybrid (CPG$+$stumbling/retraction), turn-hybrid (asymmetric descending), walk-mixed, rule-based. Each cell is the recovery improvement fraction (mean $\pm$ 95\% CI), i.e.\ $1-L_{\theta^*}/L_{\rm default}$ of the recovered $\theta^*$ evaluated on every task, averaged over five independent CMA-ES seeds $\{44,55,66,77,88\}$; all $4\times4\times5=80$ cells come from genuine closed-loop rollouts. Red squares mark within-task (diagonal) recovery. The on/off-diagonal ratio is $0.999$ (bootstrap 95\% CI $[0.994, 1.002]$ over the five seeds), so recovered parameters transfer across tasks essentially as well as they recover the training task -- recovery is task-universal here, not task-specific.}
 \label{fig:s6_flygym_4x4}
 \end{figure}
 
 \begin{figure}[H]\centering\includegraphics[width=0.85\textwidth]{Fig16_v2_joint_vs_single_robust.pdf}
-\caption{\textbf{Fig S7 $\mid$ Joint vs single training, robust cross-lab readout.} Worm cross-lab joint training closes a $30\times$ unjoined gap to $3.69\times$ cross/within $W_1$; fly cross-lab closes to $3.20\times$. The panel is drawn on the linear robust axis used by HERO-4 in the main text.}
+\caption{\textbf{Joint vs single-lab training: held-out-lab robustness.} \emph{(a)} Worm and \emph{(b)} fly held-out-lab behaviour distance (robust $z$; lower is more robust). The vermillion bar is a PGOB generator trained on a single laboratory and tested on a held-out laboratory; the blue bar is a jointly trained generator evaluated on its worst held-out laboratory. Joint training is $1.62\times$ (worm, Schafer-OWMD $\leftrightarrow$ Brown-Tierpsy) and $1.64\times$ (fly, FlyGym cross-cohort) more robust on held-out data. These are the columns of main-text Table~\ref{tab:joint_ood}.}
 \label{fig:s7_joint_vs_single}
 \end{figure}
 
-\begin{figure}[H]\centering\includegraphics[width=0.95\textwidth]{fig14_realcal_feature_compare.png}\caption{\textbf{Fig S8 $\mid$ Real-calibration feature comparison (default / PGOB-recovered / real-organism target).} Per-simulator native behavioural features for the original simulator default (grey), the PGOB-recovered parameters (blue), and the real-organism target (red), each normalised to the real target (dotted line at $1$). To prevent a few large-magnitude channels (flybody \texttt{gait\_freq}, modWorm \texttt{turn\_magnitude}/\texttt{body\_rhythm\_hz}) from compressing the sibling bars, the $y$-axis is broken with a linear lower band and a $\log_{10}$ upper band; channels whose recovered or default bars exceed the break are additionally annotated numerically. The takeaway is that for the great majority of channels the blue (recovered) bar sits closer to the dotted real-target line than the grey (default) bar. FlyGym is omitted because a ckpt-level real-organism target comparison is not available for it (see note in caption).}
+\begin{figure}[H]\centering\includegraphics[width=0.95\textwidth]{fig14_realcal_feature_compare.png}\caption{\textbf{Real-calibration feature comparison: PGOB-recovered vs.\ simulator default.} Per-channel distance to the real organism (log scale, lower $=$ closer) for the simulator default (grey) and the PGOB-recovered parameters (blue). \emph{(a)} flybody: relative error $|x-x_{\rm real}|/|x_{\rm real}|$ of each native walking feature against the MoCap reference; the recovered bar is below the default on all six channels. \emph{(b)} FlyGym: per-observable Wasserstein-1 distance to the real Janelia fly; the recovered bar is below the default on eight of ten channels. BAAIWorm and modWorm are not plotted here: the worm real-calibration evidence is the rigorously powered hero panel (PGOB-real $D_1{=}0.71$ vs.\ sim default $D_3{=}21.82$ to OWMD-N2, main text) and the modWorm native channels divide by near-zero real values that make a per-channel relative-error panel uninterpretable.}
 \label{fig:s8_realcal}
 \end{figure}
 \begin{table}[H]\centering\small
@@ -404,10 +400,6 @@ FlyGym $\to$ FlyGym & diagonal (within-sim) & recovered \\
 FlyGym $\to$ BAAIWorm & off-diagonal (valid map) & recovered \\\bottomrule
 \end{tabular}
 \end{table}
-\begin{figure}[H]\centering\includegraphics[width=0.85\textwidth]{fig19_init_mode_bar.png}\caption{\textbf{Init-mode comparison.}}\end{figure}
-\begin{figure}[H]\centering\includegraphics[width=0.9\textwidth]{fig_M4_attribution.png}\caption{\textbf{Residual-to-mechanism attribution (M4).}}\end{figure}
-\begin{figure}[H]\centering\includegraphics[width=0.9\textwidth]{fig10_final_behavior_matrix.png}\caption{\textbf{4-simulator universal behaviour-coverage matrix.}}\end{figure}
-\begin{figure}[H]\centering\includegraphics[width=0.85\textwidth]{fig22_transfer_decision.png}\caption{\textbf{Five-init decision tree.}}\end{figure}
 \begin{table}[H]\centering\small
 \caption{\textbf{Joint multi-behaviour training diversity across the four simulators.} Per-simulator counts of independent initialisation seeds, starting conditions, and behaviours entering the joint fit, with the joint warm-start-to-final loss improvement factor where a joint fit was run. Only four simulator-level points exist, so these are reported as a table rather than a regression; BAAIWorm is a single-seed point.}
 \label{tab:train_diversity}
