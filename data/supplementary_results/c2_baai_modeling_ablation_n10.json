@@ -1,0 +1,26 @@
+{
+  "experiment": "C2 BAAIWorm full5 weight-corruption modeling ablation (claim-4), n=10 seeds/level, 3 levels (L0/L1/L2), SPSA 10-iter, real BAAIWorm ClosedLoopSimulator",
+  "levels": {
+    "L0": {
+      "n": 10,
+      "recovered_Lf_mean": 0.0678,
+      "recovered_Lf_sd": 0.0212,
+      "corrupted_Lclean_mean": 0.0678,
+      "recovery_gain": 0.0
+    },
+    "L1": {
+      "n": 10,
+      "recovered_Lf_mean": 0.0714,
+      "recovered_Lf_sd": 0.0286,
+      "corrupted_Lclean_mean": 0.1338,
+      "recovery_gain": 0.0624
+    },
+    "L2": {
+      "n": 10,
+      "recovered_Lf_mean": 0.1011,
+      "recovered_Lf_sd": 0.0593,
+      "corrupted_Lclean_mean": 0.1349,
+      "recovery_gain": 0.0338
+    }
+  }
+}

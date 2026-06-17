@@ -1,0 +1,52 @@
+{
+  "sim": "modworm",
+  "comparison": "NPE-C (SNPE-C/APT) with MAF vs NSF vs MDN density estimators",
+  "note": "SNPE in sbi 0.26.1 IS SNPE-C (APT, Greenberg 2019). Baseline varies the density estimator on the SAME real pool/same N. MDN is the classic SNPE-A/B baseline (Papamakarios 2016); MAF is the paper estimator; NSF is a stronger-flow reference.",
+  "dim_theta": 30,
+  "dim_x": 6,
+  "N_pool_valid": 14993,
+  "N_train": 11994,
+  "N_heldout": 2999,
+  "sbc_source": "heldout_slice",
+  "estimators": {
+    "MAF": {
+      "heldout_logprob_mean": -49.80356979370117,
+      "heldout_nll_mean": 49.80356979370117,
+      "train_wall_sec": 230.9111864566803,
+      "sbc": {
+        "M": 150,
+        "L": 200,
+        "n_dim_pass_ks_0.05": 15,
+        "n_dim_total": 30,
+        "pass_rate": 0.5
+      }
+    },
+    "NSF": {
+      "heldout_logprob_mean": -46.326717376708984,
+      "heldout_nll_mean": 46.326717376708984,
+      "train_wall_sec": 203.83832955360413,
+      "sbc": {
+        "M": 150,
+        "L": 200,
+        "n_dim_pass_ks_0.05": 29,
+        "n_dim_total": 30,
+        "pass_rate": 0.9666666666666667
+      }
+    },
+    "MDN": {
+      "heldout_logprob_mean": -51.6485710144043,
+      "heldout_nll_mean": 51.6485710144043,
+      "train_wall_sec": 22.1277916431427,
+      "sbc": {
+        "M": 150,
+        "L": 200,
+        "n_dim_pass_ks_0.05": 16,
+        "n_dim_total": 30,
+        "pass_rate": 0.5333333333333333
+      }
+    }
+  },
+  "best_by_heldout_logprob": "NSF",
+  "elapsed_sec": 473.91291427612305,
+  "timestamp": "2026-06-14 19:51:27"
+}
