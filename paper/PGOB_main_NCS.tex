@@ -144,35 +144,36 @@ Read at the level of the field, the same recipe is a route past the invasive-mea
 \paragraph{Extended Data and Supplementary Information.} The full per-experiment specification, per-simulator hyperparameters and cohort notation (SI \S S1), the consolidated negative-results ledger (SI \S S2), extended methods including the same-species prior-transfer protocol (SI \S S3.5), and the detailed extended results---the three-distance hierarchy bootstrap (SI \S S4.1), the Yemini $43$-strain and pre-registered $28$-strain LOSO (SI \S S4.3), the cross-simulator prior transfer (SI \S S4.5, S4.6), the amortized neural-posterior back-end with density-estimator comparison and per-dimension SBC (SI \S S4.13), the three-segment decomposition with the modWorm substrate ceiling and flybody MoCap null (SI \S S4.18), the extended-budget hybrid fine-tune (SI \S S4.23), and the initialisation decision tree (SI \S S5.1)---together with per-figure reproduction commands (SI \S S6) are provided in the Supplementary Information (SI\_v11.5). The Supplementary Information also reports, in full, the honest negative and bounded-scope results summarised in the main text.
 
 % ===================== DISPLAY ITEMS (figures) =====================
-\begin{figure}[h]
+\clearpage
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Fig1_v8_composite_hero.pdf}
 \caption{\textbf{PGOB: behaviour-only parameter generation with per-axis residual attribution.} \textbf{a}, Framework: tracking video $\to$ behavioural observables $\to$ simulator with random init $\to$ black-box optimiser / amortized posterior on the behavioural loss $\to$ generated $\theta^{*}$ and Jacobian attribution map (no electrophysiology at any stage). \textbf{b}, Worm case study: centreline traces of a real OWMD-N2 worm, the PGOB-generated worm, and overlay; the generated worm reproduces the travelling-wave undulation the deposited default does not. \textbf{c}, Residual-to-mechanism Jacobian at the generated BAAIWorm $\theta^{*}$: the worst per-metric residual (reversals) routes to the dominant synaptic axis.}
 \label{fig:hero}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Fig_HERO_1_v6.pdf}
 \caption{\textbf{Per-observable PGOB-vs-default Wasserstein-1 across four simulators (C3).} Each bar is $\log_{10}(W_1^{\rm PGOB}/W_1^{\rm default})$ for one behavioural observable; a negative (blue) bar means the generated simulator is closer to real biology. Vertical scales are per-panel. Improved-observable counts are reported per simulator against each one's own baseline type (capability vs.\ deployment) and are never summed across the heterogeneous baselines; the cross-simulator-comparable statement is $G{<}1$ (Table~\ref{tab:hierarchy}).}
 \label{fig:logratio}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Fig_sbi_engine.pdf}
 \caption{\textbf{The PGOB formulation with an amortized neural-posterior engine (C4).} \textbf{a}, Posterior-predictive reproduction of each simulator's own behaviour (modWorm mean absolute observable difference $1.4{\times}10^{-3}$; FlyGym posterior-mean $\mathrm{rel}_\theta{=}0.018$). \textbf{b}, Held-out negative log-probability for three density estimators (neural spline flow $>$ MAF $>$ mixture-density network on both simulators). The optimiser and the amortized posterior are interchangeable back-ends of one behaviour-only formulation.}
 \label{fig:engine}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.8\textwidth]{Fig_worm_trajectory.pdf}
 \caption{\textbf{Behaviour-level generation of the \emph{C.~elegans} undulation wave (modWorm).} Body-bend-oscillation kymographs (temporal mean removed) for a random scrambled start, the PGOB-generated parameters, and the simulator's ground-truth target ($n{=}8$ seeds each); the generated worm reproduces the travelling wave (bend-wave correlation to target $0.76\to1.00$), the random start does not. The match is behavioural: the generated parameters lie on the behaviourally-equivalent set, not necessarily at the exact ground-truth coordinates.}
 \label{fig:wave}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Fig_HERO_6_modeling_ablation.pdf}
 \caption{\textbf{Scope of PGOB: parameter-space corruption is generated back, dynamics-space corruption is not.} \textbf{a}, modWorm (Cook ODE) \emph{dynamics}-space corruption: injecting state noise collapses observable closeness from $0.9999$ to $0.30$--$0.46$ (orange; grey are intact). \textbf{b}, FlyGym v2 (MuJoCo) \emph{dynamics}-space corruption: the integrator diverges on $4/6$ levels ($L_{\rm final}{=}1.0$), leaving no usable forward model. \textbf{c}, BAAIWorm \emph{parameter}-space corruption: corrupted-start loss $L_0$ vs.\ after-PGOB loss $L_{\rm final}$ per level; $30/30$ cells improve, mean $\Delta L/L_0{=}-29.4\%$ over the full $L_0$--$L_5$ sweep. PGOB is a parameter-space generation framework, not a dynamics-space repair tool.}
