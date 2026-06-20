@@ -247,8 +247,8 @@ flybody & speed\_skew & $+7.67$ & $+7.67$ & $+7.67$ & $+7.67$ & bit-identical \\
 \end{table}
 $5/6$ behaviour-signal-limited cells show test-W1 differences across four losses below per-seed noise.
 
-\subsection{58-test Holm--\v{S}id\'ak FWER (S4.8)}
-$11/58$ survive after correction; cluster on FlyGym v2 (4/10) and modWorm rescale points.
+\subsection{Confirmatory family vs.\ exploratory tests (S4.8)}
+The confirmatory claims (main-text Statistics) form a small \emph{pre-specified} family --- the three-distance bootstrap, the mutant leave-one-strain-out vs.\ shuffle test, the cross-laboratory $<3\times$ ratio test, the same-species prior-transfer test, the mutant-differential permutation test, and the trajectory-vs-neural ablation control --- corrected together under Holm--\v{S}id\'ak. All remaining quantitative comparisons in the study (per-observable default-vs-PGOB tests, the rescale and scale-sweep points, long-horizon and cross-condition checks) are \emph{exploratory}: reported descriptively and uncorrected, and not treated as confirmatory. For completeness, applying a single Holm--\v{S}id\'ak correction to the full pooled set of $58$ tests --- a deliberately conservative omnibus that mixes the confirmatory and exploratory analyses --- leaves $11$ surviving, clustered on FlyGym v2 ($4/10$) and modWorm rescale points; this pooled count is not the basis for any claim.
 
 \subsection{Claim 2 5-test OOD analysis (S4.10)}
 T1 BAAIWorm single $0.18797$ vs.\ joint $0.18191$ ($-3.2\%$). T2 FlyGym null with $D$-fit caveat. T3a worm cross-lab $1.62\times$ joint better. T3b fly $1.64\times$. T5 cross-strain $\bar\rho_{\rm joint}{=}0.558$. 4/5 favour joint.
