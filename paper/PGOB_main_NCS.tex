@@ -57,6 +57,7 @@ Here we show this lock can be opened with tracking video alone. Given a publishe
 \centering\footnotesize
 \caption{\textbf{The PGOB experiments at a glance: parameterisation, baseline and what is cross-comparable.} Each row is one simulator/parameterisation; the comparison class names whether a cell compares generated-to-simulator (sim$\leftrightarrow$sim), real-to-real, or generated/default-to-real (sim$\leftrightarrow$real). \emph{Only} the unit-free $G{=}D_1/D_2$ (BAAIWorm five-scale and flybody) is comparable \emph{across} simulators; every other cell is a per-simulator case study and must not be read across rows. ``Initialized'' denotes the uninformative randomised start; ``default'' the expert-calibrated published parameters.}
 \label{tab:claimmap}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{p{2.5cm}cp{1.5cm}p{2.3cm}p{2.1cm}p{2.6cm}p{1.7cm}p{3.0cm}p{2.6cm}}\toprule
 Simulator & Dim & Init & Baseline & Target & Primary metric & Real data? & Statistically significant? & Comparison class \\\midrule
 BAAIWorm (5 scales) & 5 & Initialized ($1/3$--$3\times$) & expert default & sim $\theta^*$ / real / default & robust-$z$ $D_1,D_2,D_3$; $G{=}D_1/D_2$ & Yes (OWMD, $N{=}200$) & Yes --- $G{<}1$, $1000/1000$ bootstrap & sim$\leftrightarrow$sim, real$\leftrightarrow$real, sim$\leftrightarrow$real \\[2pt]
@@ -64,7 +65,7 @@ BAAIWorm (full5, ${\approx}5{,}000$) & ${\approx}5\mathrm{k}$ & Initialized (scr
 modWorm & 30 & scale-$1.0$ perturb. & expert default & sim $\theta^*$ / real & $\mathrm{rel}_\theta$ (sim); per-feature $W_1$ (real) & Yes (OWMD) & $\mathrm{rel}_\theta{=}0.009$ (sim); deployment at parity & sim$\leftrightarrow$sim, sim$\leftrightarrow$real \\[2pt]
 flybody & 515 & scale-$0.08$ restart & expert default & sim $\theta^*$ / real & $G{=}D_1/D_2$; per-feature & Yes (Janelia) & $G{<}1$ ($0.20{<}0.42$); deployment at parity & sim$\leftrightarrow$sim, sim$\leftrightarrow$real \\[2pt]
 FlyGym v2 & 48 & Initialized (random gains) & Initialized start & random$\to$expert distance & three-segment closed fraction & anchor & $94.9\%$; $8/10$ obs Holm-sig.\ vs Initialized & sim$\leftrightarrow$sim (capability) \\\bottomrule
-\end{tabular}
+\end{tabular}}
 \end{sidewaystable}
 
 Table~\ref{tab:claimmap} lays out, per simulator, the parameterisation, baseline, metric and the comparison class each result belongs to. The reader's single guide to what travels across simulators is the unit-free $G{=}D_1/D_2$; every other number answers one specific question for one simulator where it appears.
