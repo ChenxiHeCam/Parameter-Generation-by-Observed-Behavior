@@ -1,0 +1,42 @@
+\contentsline {section}{\numberline {1}Hardware and Reproducibility (S1)}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Cohort-size notation (S1.1)}{2}{subsection.1.1}%
+\contentsline {section}{\numberline {2}Negative Results and Limitations (S2)}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Negative-Results Ledger -- Consolidated Single-Location Reference (S2.0)}{3}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Non-scalar loss falsification (S2.5)}{4}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}F1 ablation control (S2.9)}{4}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}41-experiment GAN-as-loss negative (S2.10)}{4}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Extended Methods (S3)}{5}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Universal 23-metric evaluator (S3.1)}{5}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Three-distance computation (S3.2)}{5}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Eigenworm cross-validation (S3.3)}{5}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Same-species prior-transfer protocol (S3.5)}{5}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Extended Results (S4)}{6}{section.4}%
+\contentsline {subsection}{\numberline {4.1}BAAIWorm three-distance hierarchy (S4.1)}{6}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Drosophila parity (S4.2)}{6}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Yemini 43-strain (S4.3)}{6}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}BAAIWorm $30$-cell weight-corruption (S4.4)}{6}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}F1 ablation ($10$ paired seeds) -- pre-registered NULL (S4.4.1)}{7}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Genuine same-species parameter-prior transfer (S4.5)}{8}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Cross-sim parameter prior transfer (S4.6)}{8}{subsection.4.7}%
+\contentsline {paragraph}{Per-channel attribution for unc-1 / unc-9 / unc-43.}{9}{section*.2}%
+\contentsline {subsection}{\numberline {4.8}Loss-family invariance $4\times 6$ observation (S4.7)}{9}{subsection.4.8}%
+\contentsline {subsection}{\numberline {4.9}58-test Holm--\v {S}id\'ak FWER (S4.8)}{9}{subsection.4.9}%
+\contentsline {subsection}{\numberline {4.10}Claim 2 5-test OOD analysis (S4.10)}{9}{subsection.4.10}%
+\contentsline {subsection}{\numberline {4.11}Long-horizon stability (S4.11)}{9}{subsection.4.11}%
+\contentsline {subsection}{\numberline {4.12}Cross-scale generation (S4.12)}{10}{subsection.4.12}%
+\contentsline {subsection}{\numberline {4.13}Amortized neural-posterior back-end (S4.13)}{10}{subsection.4.13}%
+\contentsline {subsection}{\numberline {4.14}Three-segment generation decomposition (S4.18)}{10}{subsection.4.14}%
+\contentsline {section}{\numberline {5}Five Init Modes and Composition (S5)}{12}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Init-mode decision tree (S5.1)}{12}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Joint multi-init calibration (S5.2)}{12}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Reproducibility (S6)}{12}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Data availability with SHA-256 hashes (S6.1)}{12}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Code availability (S6.2)}{12}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Per-figure reproduction (S6.3)}{13}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Future directions (S6.4)}{13}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Reproducibility statement (S6.5)}{13}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Live fresh-build reproduction across all four simulators (S6.6)}{13}{subsection.6.6}%
+\contentsline {section}{\numberline {7}Supplementary Figures (S7)}{14}{section.7}%
+\contentsline {section}{\numberline {8}Three-mode deployment-matrix details (S4.17)}{17}{section.8}%
+\contentsline {section}{\numberline {9}Default-vs-PGOB significance sweep + flybody scale sweep (S4.21)}{17}{section.9}%
+\contentsline {section}{\numberline {10}Extended-budget PGOB-hybrid fine-tune (S4.23)}{18}{section.10}%
